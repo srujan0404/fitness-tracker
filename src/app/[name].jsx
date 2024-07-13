@@ -2,19 +2,15 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   ActivityIndicator,
 } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
-import exercises from '../../assets/data/exercises.json';
-import { Stack } from 'expo-router';
-import { useState } from 'react';
 import { gql } from 'graphql-request';
 import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
 import graphqlClient from '../graphqlClient';
 import NewSetInput from '../components/NewSetInput';
 import SetsList from '../components/SetsList';
-import ProgressGraph from '../components/ProgressGraph';
 
 const exerciseQuery = gql`
   query exercises($name: String) {
@@ -44,7 +40,7 @@ export default function ExerciseDetailsScreen() {
     return <Text>Failed to fetch data</Text>;
   }
 
-  const exercise = data.exercises[0];
+  const exercise = data?.exercises[0];
 
   if (!exercise) {
     return <Text>Exercise not found</Text>;
@@ -52,15 +48,12 @@ export default function ExerciseDetailsScreen() {
 
   return (
     <View style={styles.container}>
-      <Stack.Screen options={{ title: exercise.name }} />
-
       <SetsList
         exerciseName={exercise.name}
         ListHeaderComponent={() => (
-          <View style={{ gap: 5 }}>
+          <View style={styles.header}>
             <View style={styles.panel}>
               <Text style={styles.exerciseName}>{exercise.name}</Text>
-
               <Text style={styles.exerciseSubtitle}>
                 <Text style={styles.subValue}>{exercise.muscle}</Text> |{' '}
                 <Text style={styles.subValue}>{exercise.equipment}</Text>
@@ -93,6 +86,9 @@ export default function ExerciseDetailsScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+  },
+  header: {
+    gap: 5,
   },
   panel: {
     backgroundColor: 'white',
