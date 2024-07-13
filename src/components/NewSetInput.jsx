@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, TextInput, Button } from 'react-native';
-import { useState } from 'react';
-import { gql } from 'graphql-request';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import graphqlClient from '../graphqlClient';
-import { useAuth } from '../providers/AuthContext';
+import { View, Text, StyleSheet, TextInput, Button } from "react-native";
+import { useState } from "react";
+import { gql } from "graphql-request";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import graphqlClient from "../graphqlClient";
+import { useAuth } from "../providers/AuthContext";
 
 const mutationDocument = gql`
   mutation MyMutation($newSet: NewSet!) {
@@ -19,18 +19,18 @@ const mutationDocument = gql`
 `;
 
 const NewSetInput = ({ exerciseName }) => {
-  const [reps, setReps] = useState('');
-  const [weight, setWeight] = useState('');
+  const [reps, setReps] = useState("");
+  const [weight, setWeight] = useState("");
 
   const { username } = useAuth();
   const queryClient = useQueryClient();
 
-  const { mutate, error, isError, isPending } = useMutation({
+  const { mutate, error, isError, isLoading } = useMutation({
     mutationFn: (newSet) => graphqlClient.request(mutationDocument, { newSet }),
     onSuccess: () => {
-      setReps('');
-      setWeight('');
-      queryClient.invalidateQueries({ queryKey: ['sets', exerciseName] });
+      setReps("");
+      setWeight("");
+      queryClient.invalidateQueries(["sets", exerciseName]);
     },
   });
 
@@ -39,14 +39,10 @@ const NewSetInput = ({ exerciseName }) => {
       username,
       exercise: exerciseName,
       reps: Number.parseInt(reps),
+      weight: Number.parseFloat(weight) || undefined,
     };
-    if (Number.parseFloat(weight)) {
-      newSet.weight = Number.parseFloat(weight);
-    }
     mutate(newSet);
   };
-
-  console.log(error);
 
   return (
     <View style={styles.container}>
@@ -65,30 +61,34 @@ const NewSetInput = ({ exerciseName }) => {
           style={styles.input}
           keyboardType="numeric"
         />
-        <Button title={isPending ? 'Adding...' : 'Add'} onPress={addSet} />
+        <Button title={isLoading ? "Adding..." : "Add"} onPress={addSet} />
       </View>
-      {isError && <Text style={{ color: 'red' }}>Failed to add the set</Text>}
+      {isError && <Text style={styles.error}>Failed to add the set</Text>}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 10,
     borderRadius: 5,
     gap: 5,
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: 'gainsboro',
+    borderColor: "gainsboro",
     padding: 10,
     flex: 1,
     borderRadius: 5,
+  },
+  error: {
+    color: "red",
+    marginTop: 5,
   },
 });
 
