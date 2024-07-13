@@ -1,16 +1,11 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  ActivityIndicator,
-} from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { gql } from 'graphql-request';
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import graphqlClient from '../graphqlClient';
-import NewSetInput from '../components/NewSetInput';
-import SetsList from '../components/SetsList';
+import { View, Text, StyleSheet, ActivityIndicator } from "react-native";
+import { useLocalSearchParams } from "expo-router";
+import { gql } from "graphql-request";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import graphqlClient from "../graphqlClient";
+import NewSetInput from "../components/NewSetInput";
+import SetsList from "../components/SetsList";
 
 const exerciseQuery = gql`
   query exercises($name: String) {
@@ -26,7 +21,7 @@ const exerciseQuery = gql`
 export default function ExerciseDetailsScreen() {
   const { name } = useLocalSearchParams();
   const { data, isLoading, error } = useQuery({
-    queryKey: ['exercises', name],
+    queryKey: ["exercises", name],
     queryFn: () => graphqlClient.request(exerciseQuery, { name }),
   });
 
@@ -55,7 +50,7 @@ export default function ExerciseDetailsScreen() {
             <View style={styles.panel}>
               <Text style={styles.exerciseName}>{exercise.name}</Text>
               <Text style={styles.exerciseSubtitle}>
-                <Text style={styles.subValue}>{exercise.muscle}</Text> |{' '}
+                <Text style={styles.subValue}>{exercise.muscle}</Text> |{" "}
                 <Text style={styles.subValue}>{exercise.equipment}</Text>
               </Text>
             </View>
@@ -71,7 +66,7 @@ export default function ExerciseDetailsScreen() {
                 onPress={() => setIsInstructionExpanded(!isInstructionExpanded)}
                 style={styles.seeMore}
               >
-                {isInstructionExpanded ? 'See less' : 'See more'}
+                {isInstructionExpanded ? "See less" : "See more"}
               </Text>
             </View>
 
@@ -91,28 +86,28 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   panel: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     padding: 10,
     borderRadius: 5,
   },
   exerciseName: {
     fontSize: 20,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   exerciseSubtitle: {
-    color: 'dimgray',
+    color: "dimgray",
   },
   subValue: {
-    textTransform: 'capitalize',
+    textTransform: "capitalize",
   },
   instructions: {
     fontSize: 16,
     lineHeight: 22,
   },
   seeMore: {
-    alignSelf: 'center',
+    alignSelf: "center",
     padding: 5,
-    fontWeight: '600',
-    color: 'gray',
+    fontWeight: "600",
+    color: "gray",
   },
 });
